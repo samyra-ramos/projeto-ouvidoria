@@ -23,6 +23,6 @@ while True:
             break 
         else:
             print("A opção selecionada não existe. Para acessar o menu, digite uma opção entre 1 e 7: ")
-    except:
+    except Exception as e:
         print('\033c')
         print('Digite uma opcão válida. A entrada precisa ser um número entre 1 e 7.')

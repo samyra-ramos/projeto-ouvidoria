@@ -1,48 +1,45 @@
 from manifestacao import Manifestacao
+from database import Database
 class Ouvidoria:
 
     def __init__(self):
-        self.manifestacoes = []
         self.tipos_manifestacao = {
             1: "sugestão",
             2: "reclamação",
             3: "elogio"
-            }
+        }
+
+        self.database = Database()
 
     def menu(self):
         return 'Ouvidoria da Universidade JMS\n1) Listar as manifestações\n2) Listar todas as sugestões\n3) Listar todas as reclamações\n4) Listar todas os elogios\n5) Enviar uma manifestação (criar uma nova)\n6) Pesquisar o número de protocolo\n7) Sair'
 
     def listarManifestacoes(self):
-        if len(self.manifestacoes) == 0:
+        manifestacoes = self.database.listaManifestacoes("todos")
+        if len(manifestacoes) == 0:
             print("Não há manifestacões cadastrados!")
-        for manifestacao in self.manifestacoes:
+        for manifestacao in manifestacoes:
             print(manifestacao)
 
     def listarSugestoes(self):
-        tem_sugestoes = False
-        for manifestacao in self.manifestacoes:
-            if manifestacao.tipo == "sugestão":
-                print(manifestacao)
-                tem_sugestoes = True
-        if tem_sugestoes == False:
+        sugestoes = self.database.listaManifestacoes("sugestão")
+        for sugestao in sugestoes:
+                print(sugestao)
+        if len(sugestoes) == 0:
             print("Não há nenhuma sugestão postada.")
 
     def listarReclamacoes(self):
-        tem_reclamacao = False
-        for manifestacao in self.manifestacoes:
-            if manifestacao.tipo == "reclamação":
-                print(manifestacao)
-                tem_reclamacao = True
-        if tem_reclamacao == False:
+        reclamacoes = self.database.listaManifestacoes("reclamação")
+        for reclamacao in reclamacoes:
+            print(reclamacao)
+        if len(reclamacoes) == 0:
             print("Não há nenhuma reclamação postada.")
 
     def listarElogios(self):
-        tem_elogio = False
-        for manifestacao in self.manifestacoes:
-            if manifestacao.tipo == "elogio":
-                print(manifestacao)
-                tem_elogio = True
-        if tem_elogio == False:
+        elogios = self.database.listaManifestacoes("elogio")
+        for elogio in elogios:
+            print(elogio)
+        if len(elogios) == 0:
             print("Não há elogio postado.")
 
     def criarManifestacao(self):
@@ -54,19 +51,15 @@ class Ouvidoria:
             else:
                 descricao = input("Digite a sua manifestação: ")
                 manifestacao = Manifestacao(nome, self.tipos_manifestacao[tipo], descricao)
-                self.manifestacoes.append(manifestacao)
+                self.database.criarManifestacao(manifestacao.nome, manifestacao.tipo, manifestacao.descricao, manifestacao.protocolo)
         except:
-            print("digite um número de manifestão válido!")
+            print("Digite um número de manifestação válido!")
 
     def procurarNumeroProtocolo(self):
         numero_protocolo_de_busca = input("digite o número do protocolo: ")
-        resultado_busca = None
-        for manifestacao in self.manifestacoes:
-            if numero_protocolo_de_busca == str(manifestacao.protocolo):
-                resultado_busca = manifestacao
-                break
+        manifestacao = self.database.buscarManifestacaoPorProtocolo(numero_protocolo_de_busca)
  
-        if resultado_busca == None:
+        if manifestacao == None:
             print("Protocolo não encontrado!")
         else:
-            print(resultado_busca)
+            print(manifestacao)
